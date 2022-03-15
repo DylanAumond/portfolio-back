@@ -23,6 +23,7 @@ app.use("/users", userRoutes);
 app.use("/technologies", technologyRoutes);
 app.use("/projects", projectsRoutes);
 app.use("/customers", customersRoutes);
+app.use("/public", express.static("public"));
 
 mongoose
   .connect(process.env.CONNEXION_URL)

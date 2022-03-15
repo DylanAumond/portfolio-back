@@ -1,4 +1,5 @@
 import express from "express";
+import uploadImage from "../middleware/uploadImage.js";
 import {
   createCustomer,
   deleteCustomer,
@@ -7,7 +8,7 @@ import {
 
 const router = express.Router();
 
-router.post("/", createCustomer);
+router.post("/", uploadImage.single("logo"), createCustomer);
 router.get("/", getCustomers);
 router.delete("/:id", deleteCustomer);
 

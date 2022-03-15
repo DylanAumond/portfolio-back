@@ -2,7 +2,10 @@ import Customers from "../models/Customers.js";
 import mongoose from "mongoose";
 
 export const createCustomer = async (req, res) => {
-  const { libelle, website, logo } = req.body;
+  console.log(req);
+
+  const { libelle, website } = req.body;
+  const logo = req.file.filename;
   try {
     const result = await Customers.create({
       libelle,
