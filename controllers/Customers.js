@@ -27,3 +27,12 @@ export const deleteCustomer = async (req, res) => {
     res.status(404).json({ message: "request want wrong" });
   }
 };
+
+export const getCustomers = async (req, res) => {
+  try {
+    const customers = await Customers.find();
+    res.status(200).json(customers);
+  } catch (error) {
+    res.status(404).json(error);
+  }
+};

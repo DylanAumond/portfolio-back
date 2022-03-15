@@ -25,3 +25,12 @@ export const deleteTechnologie = async (req, res) => {
     res.status(404).json({ message: "request want wrong" });
   }
 };
+
+export const getTechnologies = async (req, res) => {
+  try {
+    const technologies = await Technologies.find();
+    res.status(200).json(technologies);
+  } catch (error) {
+    res.status(404).json({ message: "request went wrong" });
+  }
+};
