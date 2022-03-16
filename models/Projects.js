@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 const projectSchema = mongoose.Schema({
-  libelle: { type: String, required: true },
+  libelle: { type: String, required: true, unique: true },
   state: { type: Boolean, required: true },
   imgs: [{ type: String }],
   description: { type: String },

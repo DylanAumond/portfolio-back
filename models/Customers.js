@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 const customerSchema = mongoose.Schema({
-  libelle: { type: String, required: true },
+  libelle: { type: String, required: true, unique: true },
   webSite: { type: String },
   logo: { type: String, required: true },
 });

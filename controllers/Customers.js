@@ -1,9 +1,18 @@
 import Customers from "../models/Customers.js";
 import mongoose from "mongoose";
+import fs from "fs";
+
+function deleteImage(file) {
+  const path = "./public/images/" + file;
+  try {
+    fs.unlinkSync(path);
+    //file removed
+  } catch (err) {
+    console.error(err);
+  }
+}
 
 export const createCustomer = async (req, res) => {
-  console.log(req);
-
   const { libelle, website } = req.body;
   const logo = req.file.filename;
   try {
@@ -24,7 +33,9 @@ export const deleteCustomer = async (req, res) => {
     if (!mongoose.Types.ObjectId.isValid(id))
       return res.status(404).json({ message: "This Customer doesn't exist!" });
 
-    const customer = await Customers.findByIdAndRemove(id);
+    const customer = await Customers.findById(id);
+    deleteImage(customer.logo);
+    customer.remove();
     res.json({ message: "Customer has been deleted" });
   } catch (error) {
     res.status(404).json({ message: "request want wrong" });

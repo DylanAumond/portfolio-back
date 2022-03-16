@@ -39,12 +39,11 @@ export const getProjects = async (req, res) => {
   }
 };
 
-export const getProjectById = async (req, res) => {
-  const { id } = req.params;
+export const getProjectByLibelle = async (req, res) => {
+  const { libelle } = req.params;
   try {
-    if (!mongoose.Types.ObjectId.isValid(id))
-      return res.status(404).json({ message: "This project doesn't exist" });
-    const project = await Projects.findById(id);
-    res.status(200).json(project);
+    const project = await Projects.findOne({ libelle: libelle });
+    if (project != null) return res.status(200).json(project);
+    res.status(404).json({ message: "this project isn't on our website" });
   } catch (error) {}
 };

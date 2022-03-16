@@ -2,7 +2,7 @@ import express from "express";
 import {
   createProject,
   deleteProject,
-  getProjectById,
+  getProjectByLibelle,
   getProjects,
 } from "../controllers/Projects.js";
 
@@ -10,7 +10,7 @@ const router = express.Router();
 
 router.post("/", createProject);
 router.get("/", getProjects);
-router.get("/:id", getProjectById);
+router.get("/:libelle", getProjectByLibelle);
 router.delete("/:id", deleteProject);
 
 export default router;
