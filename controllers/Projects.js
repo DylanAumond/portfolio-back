@@ -1,17 +1,34 @@
 import Projects from "../models/Projects.js";
 import mongoose from "mongoose";
+import fs from "fs";
+
+function deleteImage(file) {
+  const path = "./public/images/" + file;
+  try {
+    fs.unlinkSync(path);
+    //file removed
+  } catch (err) {
+    console.error(err);
+  }
+}
 
 export const createProject = async (req, res) => {
-  const { libelle, state, imgs, description, customer } = req.body;
+  const { libelle, state, description, customer } = req.body;
+  const imgs = [];
+  const images = req.files;
+  images.forEach((img) => {
+    imgs.push(img.filename);
+  });
+
   try {
-    const result = await Projects.create({
+    const project = await Projects.create({
       libelle,
       state,
       imgs,
       description,
       customer,
     });
-    res.status(201).json({ result });
+    res.status(201).json(project);
   } catch (error) {
     res.status(400).json(error);
   }
@@ -22,8 +39,13 @@ export const deleteProject = async (req, res) => {
   try {
     if (!mongoose.Types.ObjectId.isValid(id))
       return res.status(404).json({ message: "This Project doesn't exist!" });
-
-    await Projects.findByIdAndRemove(id);
+    const project = await Projects.findOne({ _id: id });
+    console.log(project);
+    project.imgs.forEach((img) => {
+      console.log(img);
+      deleteImage(img);
+    });
+    project.remove();
     res.json({ message: "Project has been deleted" });
   } catch (error) {
     res.status(404).json({ message: "request want wrong" });
