@@ -16,12 +16,12 @@ export const createCustomer = async (req, res) => {
   const { libelle, website } = req.body;
   const logo = req.file.filename;
   try {
-    const result = await Customers.create({
+    const customer = await Customers.create({
       libelle,
       website,
       logo,
     });
-    res.status(201).json({ result });
+    res.status(201).json(customer);
   } catch (error) {
     res.status(400).json({ error });
   }

@@ -13,7 +13,7 @@ function deleteImage(file) {
 }
 
 export const createProject = async (req, res) => {
-  const { libelle, state, description, customer } = req.body;
+  const { libelle, state, description, customer, technologies } = req.body;
   const imgs = [];
   const images = req.files;
   if (images) {
@@ -21,7 +21,6 @@ export const createProject = async (req, res) => {
       imgs.push(img.filename);
     });
   }
-
   try {
     const project = await Projects.create({
       libelle,
@@ -29,6 +28,7 @@ export const createProject = async (req, res) => {
       imgs,
       description,
       customer,
+      technologies: technologies,
     });
     res.status(201).json(project);
   } catch (error) {
