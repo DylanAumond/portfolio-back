@@ -50,3 +50,32 @@ export const getTechnologies = async (req, res) => {
     res.status(404).json({ message: "request went wrong" });
   }
 };
+
+export const updateTechnology = async (req, res) => {
+  const { id } = req.params;
+  const updatedTechnology = req.body;
+  try {
+    if (!mongoose.Types.ObjectId.isValid(id))
+      return res
+        .status(404)
+        .json({ message: "This Technology doesn't exist!" });
+    if (req.file != null) {
+      let technologyImg = await Technologies.findById(id);
+      if (technologyImg != null) {
+        deleteImage(technologyImg.logo);
+      }
+      updatedTechnology.logo = req.file.filename;
+    }
+    const technology = await Technologies.findOneAndUpdate(
+      { _id: id },
+      updatedTechnology,
+      {
+        new: true,
+      }
+    );
+    console.log("hih");
+    res.status(200).json(technology);
+  } catch (error) {
+    res.status(400).json({ message: "something went wrong", error: error });
+  }
+};
