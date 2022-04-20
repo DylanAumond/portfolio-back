@@ -6,19 +6,28 @@ import uid from "uid-safe";
 import { createRefreshToken, getToken } from "./Tokens.js";
 
 export const createUser = async (req, res) => {
-  const { firstName, lastName, address, credentials } = req.body;
+  const {
+    firstName,
+    lastName,
+    town,
+    street,
+    country,
+    postalCode,
+    mail,
+    password,
+  } = req.body;
   try {
     const user = await Users.create({
       fullName: lastName + " " + firstName,
       credentials: {
-        mail: credentials.mail,
-        password: await bcrypt.hash(credentials.password, 12),
+        mail: mail,
+        password: await bcrypt.hash(password, 12),
       },
       address: {
-        postalCode: address.postalCode,
-        town: address.town,
-        street: address.street,
-        country: address.country,
+        postalCode: postalCode,
+        town: town,
+        street: street,
+        country: country,
       },
     });
     return res.status(201).json({ user });
@@ -47,7 +56,7 @@ export const login = async (req, res) => {
     const jwtToken = jwt.sign(
       { id: user._id, roles: user.roles, xsrfToken }, //data stored in the token
       process.env.JWTKEY, //jwt's private key
-      { expiresIn: "10m" } //token's validity time
+      { expiresIn: "5m" } //token's validity time
     );
     //create refresh token
     const refreshToken = jwt.sign(
@@ -55,15 +64,19 @@ export const login = async (req, res) => {
       process.env.REFRESHKEY
     );
     //store refresh token in db
-    createRefreshToken(refreshToken, user._id);
     res.cookie("access_token", jwtToken, {
       httpOnly: true,
+      sameSite: "none",
+      secure: true,
       //TODO: passer le site https
-      //secure: true, // true to force https
+      //secure: false, // true to force https
     });
+    createRefreshToken(refreshToken, user._id);
     res.cookie("refresh_token", refreshToken, {
       httpOnly: true,
-      //secure: true,
+      sameSite: "none",
+      secure: true,
+      //secure: false,
     });
     res.status(200).json(xsrfToken);
   } catch (error) {
@@ -79,7 +92,6 @@ export const refreshUserToken = async (req, res) => {
       if (getToken(refreshToken)) {
         jwt.verify(refreshToken, process.env.REFRESHKEY, (error, user) => {
           if (error) return res.status(403).json(error);
-          console.log(user);
           //create JWT token
           const jwtToken = jwt.sign(
             { id: user.id, roles: user.roles, xsrfToken }, //data stored in the token

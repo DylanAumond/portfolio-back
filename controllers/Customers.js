@@ -51,6 +51,18 @@ export const getCustomers = async (req, res) => {
   }
 };
 
+export const getCustomer = async (req, res) => {
+  const { id } = req.params;
+  try {
+    if (!mongoose.Types.ObjectId.isValid(id))
+      return res.status(404).json({ message: "This Customer doesn't exist!" });
+    const customer = await Customers.findById(id);
+    res.status(200).json(customer);
+  } catch (error) {
+    res.status(400).json({ message: "something went wrong", error: error });
+  }
+};
+
 export const updateCustomer = async (req, res) => {
   const { id } = req.params;
   const updatedCustomer = req.body;

@@ -52,6 +52,7 @@ export const getTechnologies = async (req, res) => {
 };
 
 export const updateTechnology = async (req, res) => {
+  console.log("hih");
   const { id } = req.params;
   const updatedTechnology = req.body;
   try {
@@ -73,7 +74,6 @@ export const updateTechnology = async (req, res) => {
         new: true,
       }
     );
-    console.log("hih");
     res.status(200).json(technology);
   } catch (error) {
     res.status(400).json({ message: "something went wrong", error: error });
