@@ -14,6 +14,7 @@ export const createRole = async (req, res) => {
 };
 
 export const getRoles = async (req, res) => {
+  console.log(req.roles);
   try {
     const roles = await Roles.find();
     res.status(200).json(roles);

@@ -42,7 +42,6 @@ export const deleteProject = async (req, res) => {
     if (!mongoose.Types.ObjectId.isValid(id))
       return res.status(404).json({ message: "This Project doesn't exist!" });
     const project = await Projects.findOne({ _id: id });
-    console.log(project);
     project.imgs.forEach((img) => {
       console.log(img);
       deleteImage(img);
@@ -69,7 +68,10 @@ export const getProjects = async (req, res) => {
 export const getProjectById = async (req, res) => {
   const { id } = req.params;
   try {
-    const project = await Projects.findById(id).populate("technologies");
+    const project = await Projects.findById(id).populate([
+      "technologies",
+      "customer",
+    ]);
     if (project != null) return res.status(200).json([project]);
     res.status(404).json({ message: "this project isn't on our website" });
   } catch (error) {}

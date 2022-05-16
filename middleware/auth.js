@@ -1,4 +1,4 @@
-import jwt from "jsonwebtoken";
+import jwt, { decode } from "jsonwebtoken";
 import { getToken } from "../controllers/Tokens.js";
 
 export const auth = async (req, res, next) => {
@@ -43,6 +43,7 @@ export const auth = async (req, res, next) => {
       } else if (decoded.xsrfToken != xsrfToken) {
         res.status("403").json({ messsage: "attack CSRF decteted" });
       } else {
+        req.roles = decoded.roles;
         next();
       }
     });

@@ -158,3 +158,33 @@ export const addTechnology = async (req, res) => {
     console.log(error);
   }
 };
+
+export const addRoleToUser = async (req, res) => {
+  const { roleId } = req.body;
+  const { id } = req.params;
+  try {
+    const user = await Users.findById(id);
+    await user.update({
+      $addToSet: { roles: roleId },
+      new: true,
+      upsert: true,
+    });
+    res.status(201).json(user);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const removeRoleToUser = async (req, res) => {
+  const { roleId } = req.body;
+  const { id } = req.params;
+  try {
+    const user = await Users.findById(id);
+    await user.update({
+      $pull: { roles: roleId },
+    });
+    res.status(201).json(user);
+  } catch (error) {
+    console.log(error);
+  }
+};
