@@ -56,20 +56,21 @@ export const deleteProject = async (req, res) => {
 
 export const getProjects = async (req, res) => {
   try {
-    const projects = await Projects.find();
+    const projects = await Projects.find().populate([
+      "technologies",
+      "customer",
+    ]);
     res.status(200).json(projects);
   } catch (error) {
     res.status(404).json(error);
   }
 };
 
-export const getProjectByLibelle = async (req, res) => {
-  const { libelle } = req.params;
+export const getProjectById = async (req, res) => {
+  const { id } = req.params;
   try {
-    const project = await Projects.findOne({ libelle: libelle }).populate(
-      "technologies"
-    );
-    if (project != null) return res.status(200).json(project);
+    const project = await Projects.findById(id).populate("technologies");
+    if (project != null) return res.status(200).json([project]);
     res.status(404).json({ message: "this project isn't on our website" });
   } catch (error) {}
 };

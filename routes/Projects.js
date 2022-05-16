@@ -3,7 +3,7 @@ import {
   addTechnoToProject,
   createProject,
   deleteProject,
-  getProjectByLibelle,
+  getProjectById,
   getProjects,
   removeTechnoFromProject,
 } from "../controllers/Projects.js";
@@ -13,7 +13,7 @@ const router = express.Router();
 
 router.post("/", uploadImage.array("imgs"), createProject);
 router.get("/", getProjects);
-router.get("/:libelle", getProjectByLibelle);
+router.get("/:id", getProjectById);
 router.patch("/technology/add", addTechnoToProject);
 router.patch("/technology/remove", removeTechnoFromProject);
 router.delete("/:id", deleteProject);
