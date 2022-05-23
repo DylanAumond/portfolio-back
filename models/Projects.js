@@ -7,7 +7,7 @@ const projectSchema = mongoose.Schema({
   description: { type: String },
   technologies: [{ type: mongoose.Schema.Types.ObjectId, ref: "Technologies" }],
   workers: [{ type: mongoose.Schema.Types.ObjectId, ref: "Users" }],
-  customer: [{ type: mongoose.Schema.Types.ObjectId, ref: "Customers" }],
+  customer: { type: mongoose.Schema.Types.ObjectId, ref: "Customers" },
 });
 
 export default mongoose.model("Projects", projectSchema);

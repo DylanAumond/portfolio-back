@@ -43,7 +43,6 @@ export const deleteProject = async (req, res) => {
       return res.status(404).json({ message: "This Project doesn't exist!" });
     const project = await Projects.findOne({ _id: id });
     project.imgs.forEach((img) => {
-      console.log(img);
       deleteImage(img);
     });
     project.remove();
