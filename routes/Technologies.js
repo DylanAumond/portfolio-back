@@ -11,24 +11,31 @@ import uploadImage from "../middleware/uploadImage.js";
 
 const router = express.Router();
 
+// Create a new Technology
 router.post(
   "/",
-  auth,
-  roles(["62441ec203d799fe02f2e56b"]),
+  auth, // need auth
+  roles(["ADMIN"]), // authorised roles
   uploadImage.single("logo"),
   createTechnologie
 );
+
+// Get all technology
 router.get("/", getTechnologies);
+
+// Delete a technology
 router.delete(
   "/:id",
-  auth,
-  roles(["62441ec203d799fe02f2e56b"]),
+  auth, // need auth
+  roles(["ADMIN"]), // authorised roles
   deleteTechnologie
 );
+
+// Update a technology
 router.patch(
   "/:id",
-  auth,
-  roles(["62441ec203d799fe02f2e56b"]),
+  auth, // need auth
+  roles(["ADMIN"]), // authorised roles
   uploadImage.single("logo"),
   updateTechnology
 );

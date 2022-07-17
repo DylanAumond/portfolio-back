@@ -28,6 +28,7 @@ const corsOptions = {
 app.use(cors(corsOptions));
 //app.use(cors());
 
+// API main routes
 app.use("/users", userRoutes);
 app.use("/technologies", technologyRoutes);
 app.use("/projects", projectsRoutes);
@@ -36,7 +37,7 @@ app.use("/roles", rolesRoutes);
 app.use("/public", express.static("public"));
 
 mongoose
-  .connect(process.env.CONNEXION_URL)
+  .connect(process.env.DB_URL)
   .then(() => {
     app.listen(process.env.PORT, () =>
       console.log(`Server running on port: ${process.env.PORT}`)

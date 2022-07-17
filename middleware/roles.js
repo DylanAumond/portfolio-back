@@ -1,10 +1,9 @@
 export function roles(roles) {
   return (req, res, next) => {
-    const userRoles = req.roles;
-    if (userRoles.some((userRole) => roles.indexOf(userRole) >= 0)) {
-      next();
-    } else {
-      return res.status(403).json("acces denied");
-    }
-  };
+    // check if user's roles are allowed
+    if (req.roles.some((userRole) => roles.indexOf(userRole.libelle) >= 0)) return next()
+
+    // return http response with code 403
+    return res.status(403).json('acces denied')
+  }
 }

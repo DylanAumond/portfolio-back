@@ -1,38 +1,46 @@
-import express from "express";
-import uploadImage from "../middleware/uploadImage.js";
+import express from 'express'
+import uploadImage from '../middleware/uploadImage.js'
 import {
   createCustomer,
   deleteCustomer,
   getCustomer,
   getCustomers,
   updateCustomer,
-} from "../controllers/Customers.js";
-import { auth } from "../middleware/auth.js";
-import { roles } from "../middleware/roles.js";
+} from '../controllers/Customers.js'
+import { auth } from '../middleware/auth.js'
+import { roles } from '../middleware/roles.js'
 
-const router = express.Router();
-
+const router = express.Router()
+// create a customer
 router.post(
-  "/",
+  '/',
   auth,
-  roles(["62441ec203d799fe02f2e56b"]),
-  uploadImage.single("logo"),
+  roles(['ADMIN']), // authorised roles
+  uploadImage.single('logo'), // upload image
   createCustomer
-);
-router.get("/", getCustomers);
-router.delete(
-  "/:id",
-  auth,
-  roles(["62441ec203d799fe02f2e56b"]),
-  deleteCustomer
-);
-router.patch(
-  "/:id",
-  auth,
-  roles(["62441ec203d799fe02f2e56b"]),
-  uploadImage.single("logo"),
-  updateCustomer
-);
-router.get("/:id", getCustomer);
+)
 
-export default router;
+// get all customers
+router.get('/', getCustomers)
+
+// Delete a customer
+router.delete(
+  '/:id',
+  auth,
+  roles(['ADMIN']), // authorised roles
+  deleteCustomer
+)
+
+// update a customer
+router.patch(
+  '/:id',
+  auth, // Need auth
+  roles(['ADMIN']), // authorised roles
+  uploadImage.single('logo'),
+  updateCustomer
+)
+
+// get a customer by id
+router.get('/:id', getCustomer)
+
+export default router

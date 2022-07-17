@@ -16,7 +16,7 @@ const router = express.Router();
 router.post(
   "/",
   auth,
-  roles(["62441ec203d799fe02f2e56b"]),
+  roles(["ADMIN"]), // authorised roles
   uploadImage.array("imgs"),
   createProject
 );
@@ -25,15 +25,19 @@ router.get("/:id", getProjectById);
 router.patch(
   "/technology/add",
   auth,
-  roles(["62441ec203d799fe02f2e56b"]),
+  roles(["ADMIN"]), // authorised roles
   addTechnoToProject
 );
 router.patch(
   "/technology/remove",
   auth,
-  roles(["62441ec203d799fe02f2e56b"]),
+  roles(["ADMIN"]), // authorised roles
   removeTechnoFromProject
 );
-router.delete("/:id", auth, roles(["62441ec203d799fe02f2e56b"]), deleteProject);
+router.delete(
+  "/:id",
+  auth,
+  roles(["ADMIN"]), // authorised roles deleteProject
+  );
 
 export default router;

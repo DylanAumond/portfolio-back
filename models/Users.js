@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose'
 
 const userSchema = mongoose.Schema({
   fullName: { type: String, required: true, unique: true },
@@ -12,8 +12,8 @@ const userSchema = mongoose.Schema({
     postalCode: { type: String },
     country: { type: String },
   },
-  roles: [{ type: mongoose.Schema.Types.ObjectId, ref: "Roles" }],
-  technologies: [{ type: mongoose.Schema.Types.ObjectId, ref: "Technologies" }],
-});
+  roles: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Roles' }],
+  technologies: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Technologies' }],
+})
 
-export default mongoose.model("Users", userSchema);
+export default mongoose.model('Users', userSchema)
