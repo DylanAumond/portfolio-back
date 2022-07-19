@@ -9,8 +9,14 @@ const customerSchema = mongoose.Schema({
     unique: true,
     required: true
     },
-  webSite: { type: String },
-  logo: { type: String, required: true },
+  url: { 
+    type: String ,
+    maxLength: 250,
+  },
+  logo: { 
+    type: String,
+    required: true 
+  },
 })
 
 export default mongoose.model('Customers', customerSchema)
