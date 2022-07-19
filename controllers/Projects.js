@@ -3,52 +3,63 @@ import mongoose from 'mongoose'
 import fs from 'fs'
 
 function deleteImage(file) {
+  // image's path
   const path = './public/images/' + file
   try {
+    // delete the image
     fs.unlinkSync(path)
-    //file removed
   } catch (err) {
     console.error(err)
   }
 }
 
 export const createProject = async (req, res) => {
-  const { libelle, state, description, customer, technologies } = req.body
-  const imgs = []
-  const images = req.files
-  if (images) {
-    images.forEach((img) => {
-      imgs.push(img.filename)
-    })
-  }
+  // get all data from the request
+  const { libelle, description, customer, technologies, tasks } = req.body
+  // return an array of images' name
+  const imgs = req.files !== undefined ? req.files.map((img) => img.filename) : null
   try {
+    // create a new project object
     const project = await Projects.create({
       libelle,
-      state,
-      imgs,
       description,
       customer,
-      technologies: technologies,
+      imgs, // array of image
+      technologies: technologies, // array of technology
     })
+    // retrun success with code 201 and the project
     res.status(201).json(project)
   } catch (error) {
     res.status(400).json(error)
   }
 }
 
+// delete a project from the database
 export const deleteProject = async (req, res) => {
+  // get id from the request's params
   const { id } = req.params
+
   try {
-    if (!mongoose.Types.ObjectId.isValid(id))
-      return res.status(404).json({ message: 'This Project doesn\'t exist!' })
+    // check if project exist
+    if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).json({ message: 'This Project doesn\'t exist!' })
+
+    // select the project
     const project = await Projects.findOne({ _id: id })
+
+    // delete each image associated with the project
     project.imgs.forEach((img) => {
+      // delete an image
       deleteImage(img)
     })
+
+    // delete the project
     project.remove()
+
+    // send a success message
     res.json({ message: 'Project has been deleted' })
   } catch (error) {
-    res.status(404).json({ message: 'request want wrong' })
+    // send a error message
+    res.status(400).json({ message: 'request want wrong' })
   }
 }
 

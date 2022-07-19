@@ -16,13 +16,13 @@ function deleteImage(file) {
 // create a new customer
 export const createCustomer = async (req, res) => {
   // get data from request
-  const { libelle, website } = req.body
+  const { libelle, url } = req.body
   // get file from request
   const logo = req.file.filename
   try {
     const customer = await Customers.create({
       libelle,
-      website,
+      url,
       logo,
     })
     // return 201 code & the new customer

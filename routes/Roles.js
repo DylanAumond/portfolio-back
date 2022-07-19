@@ -20,7 +20,8 @@ router.get(
 
 router.delete(
     "/:id",
-    auth, // need auth roles(["ADMIN"]),
+    auth, // need auth
+    roles(["ADMIN"]),
     deleteRole);
 
 export default router;

@@ -12,32 +12,43 @@ import { roles } from "../middleware/roles.js";
 import uploadImage from "../middleware/uploadImage.js";
 
 const router = express.Router();
-
+// create a new project
 router.post(
   "/",
-  auth,
+  auth, // need auth
   roles(["ADMIN"]), // authorised roles
   uploadImage.array("imgs"),
   createProject
 );
+
+// get all projects
 router.get("/", getProjects);
+
+// get a project
 router.get("/:id", getProjectById);
+
+// remove a new project's technologies
 router.patch(
   "/technology/add",
-  auth,
+  auth, // need auth
   roles(["ADMIN"]), // authorised roles
   addTechnoToProject
 );
+
+// remove a new project's technologies
 router.patch(
   "/technology/remove",
-  auth,
+  auth, // need auth
   roles(["ADMIN"]), // authorised roles
   removeTechnoFromProject
 );
+
+// delete a project
 router.delete(
   "/:id",
-  auth,
-  roles(["ADMIN"]), // authorised roles deleteProject
+  auth, // need auth
+  roles(["ADMIN"]), // authorised roles 
+  deleteProject
   );
 
 export default router;
