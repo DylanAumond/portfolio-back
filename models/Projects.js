@@ -11,8 +11,8 @@ const projectSchema = mongoose.Schema({
   tasks: [
     // task is an object with a string
     {
-      type: String,
-      maxLenght: 250,
+      fr:String,
+      en:String,
     }
   ],
   imgs: [
@@ -20,8 +20,9 @@ const projectSchema = mongoose.Schema({
       type: String 
     }
   ],
-  description: { 
-    type: String 
+  description: {
+    fr:String,
+    en:String
   },
   technologies: [
     { 

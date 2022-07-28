@@ -6,6 +6,7 @@ import {
   getProjectById,
   getProjects,
   removeTechnoFromProject,
+  updateProject,
 } from "../controllers/Projects.js";
 import { auth } from "../middleware/auth.js";
 import { roles } from "../middleware/roles.js";
@@ -26,6 +27,14 @@ router.get("/", getProjects);
 
 // get a project
 router.get("/:id", getProjectById);
+
+// update a project
+router.patch("/:id",
+auth, // need auth
+roles(["ADMIN"]), // authorised roles
+uploadImage.array("imgs"),
+updateProject
+);
 
 // remove a new project's technologies
 router.patch(

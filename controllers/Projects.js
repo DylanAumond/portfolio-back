@@ -22,15 +22,51 @@ export const createProject = async (req, res) => {
     // create a new project object
     const project = await Projects.create({
       libelle,
-      description,
-      customer,
+      description: JSON.parse(description),
+      customer: JSON.parse(customer),
+      tasks: JSON.parse(tasks),
       imgs, // array of image
-      technologies: technologies, // array of technology
+      technologies: JSON.parse(technologies), // array of technology
     })
     // retrun success with code 201 and the project
     res.status(201).json(project)
   } catch (error) {
     res.status(400).json(error)
+  }
+}
+
+export const updateProject = async (req, res) => {
+  // get project id from the request params
+  const { id } = req.params
+  const updatedProject = {
+    libelle: req.body.libelle,
+    description: JSON.parse(req.body.description),
+    customer: JSON.parse(req.body.customer),
+    tasks: JSON.parse(req.body.tasks),
+    imgs: req.body.imgs, // array of image
+    technologies: JSON.parse(req.body.technologies), // array of technology
+  }
+  try {
+    //check if project exist
+    if (!mongoose.Types.ObjectId.isValid(id))
+      return res.status(404).json({ message: 'This Project doesn\'t exist!' })
+    if (req.file != null) {
+      let ProjectImg = await Projects.findById(id)
+      if (ProjectImg != null) {
+        deleteImage(ProjectImg.logo)
+      }
+      updatedProject.logo = req.file.filename
+    }
+    const project = await Projects.findOneAndUpdate(
+      { _id: id },
+      updatedProject,
+      {
+        new: true,
+      }
+    )
+    res.status(200).json(project)
+  } catch (error) {
+    res.status(400).json({ message: 'something went wrong', error: error })
   }
 }
 
