@@ -38,14 +38,22 @@ export const createProject = async (req, res) => {
 export const updateProject = async (req, res) => {
   // get project id from the request params
   const { id } = req.params
+
+  const imgs = req.body.imgs
+  // return an array of images' name
+  for(const img of req.files) {
+    imgs.push(img.filename)
+  }
+  //const newImgs = req.files !== undefined ? req.files.map((img) => img.filename) : null
   const updatedProject = {
     libelle: req.body.libelle,
     description: JSON.parse(req.body.description),
     customer: JSON.parse(req.body.customer),
     tasks: JSON.parse(req.body.tasks),
-    imgs: req.body.imgs, // array of image
+    imgs: imgs, // array of image
     technologies: JSON.parse(req.body.technologies), // array of technology
   }
+  console.log(req.body.imgs)
   try {
     //check if project exist
     if (!mongoose.Types.ObjectId.isValid(id))
