@@ -42,6 +42,7 @@ export const deleteTechnologie = async (req, res) => {
   }
 }
 
+// get all technologies
 export const getTechnologies = async (req, res) => {
   try {
     const technologies = await Technologies.find()
@@ -51,8 +52,23 @@ export const getTechnologies = async (req, res) => {
   }
 }
 
+// get a technology from id
+export const getTechnologyById = async (req, res) =>{
+  const {id} = req.params
+  try {
+    if (!mongoose.Types.ObjectId.isValid(id))
+      return res
+      .status(404)
+      .json({ message: 'This Technology doesn\'t exist!'})
+    const technologie = await Technologies.findById(id)
+    return res.status(200).json(technologie)
+  }
+  catch(error){
+    res.status(400).json({ message: 'something went wrong', error: error })
+  }
+}
+
 export const updateTechnology = async (req, res) => {
-  console.log('hih')
   const { id } = req.params
   const updatedTechnology = req.body
   try {

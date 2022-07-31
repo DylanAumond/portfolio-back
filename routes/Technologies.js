@@ -3,6 +3,7 @@ import {
   createTechnologie,
   deleteTechnologie,
   getTechnologies,
+  getTechnologyById,
   updateTechnology,
 } from "../controllers/Technologies.js";
 import { auth } from "../middleware/auth.js";
@@ -22,6 +23,9 @@ router.post(
 
 // Get all technology
 router.get("/", getTechnologies);
+
+// Get a technology by id
+router.get("/:id", getTechnologyById)
 
 // Delete a technology
 router.delete(
