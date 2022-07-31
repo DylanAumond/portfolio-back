@@ -53,7 +53,6 @@ export const updateProject = async (req, res) => {
     imgs: imgs, // array of image
     technologies: JSON.parse(req.body.technologies), // array of technology
   }
-  console.log(req.body.imgs)
   try {
     //check if project exist
     if (!mongoose.Types.ObjectId.isValid(id))
@@ -126,7 +125,7 @@ export const getProjectById = async (req, res) => {
       'technologies',
       'customer',
     ])
-    if (project != null) return res.status(200).json([project])
+    if (project != null) return res.status(200).json(project)
     res.status(404).json({ message: 'this project isn\'t on our website' })
   } catch (error) {}
 }

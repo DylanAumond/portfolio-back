@@ -33,6 +33,7 @@ export const createCustomer = async (req, res) => {
   }
 }
 
+// delete a customer
 export const deleteCustomer = async (req, res) => {
   const { id } = req.params
   try {
@@ -48,15 +49,19 @@ export const deleteCustomer = async (req, res) => {
   }
 }
 
+// get all customers
 export const getCustomers = async (req, res) => {
   try {
+    // get all customers in the database
     const customers = await Customers.find()
+    // return status code 200 and a list of customers
     res.status(200).json(customers)
   } catch (error) {
     res.status(404).json(error)
   }
 }
 
+// get a customer by id
 export const getCustomer = async (req, res) => {
   const { id } = req.params
   try {
@@ -69,17 +74,23 @@ export const getCustomer = async (req, res) => {
   }
 }
 
+// update a customer
 export const updateCustomer = async (req, res) => {
   const { id } = req.params
   const updatedCustomer = req.body
   try {
+    // check if the id is valid
     if (!mongoose.Types.ObjectId.isValid(id))
       return res.status(404).json({ message: 'This Customer doesn\'t exist!' })
     if (req.file != null) {
-      let customerImg = await Customers.findById(id)
+      // find customer by id in db
+      const customerImg = await Customers.findById(id)
+      // if customer has an image
       if (customerImg != null) {
+        // delete the customer image
         deleteImage(customerImg.logo)
       }
+      // update the customer image src
       updatedCustomer.logo = req.file.filename
     }
     const customer = await Customers.findOneAndUpdate(
