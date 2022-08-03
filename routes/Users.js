@@ -52,6 +52,6 @@ router.patch(
 router.post("/login", login);
 
 // refreshUserToken
-router.post("/refreshToken", refreshUserToken);
+router.get("/refreshToken", refreshUserToken);
 
 export default router;

@@ -19,7 +19,7 @@ export const createUser = async (req, res) => {
   } = req.body
   try {
     const user = await Users.create({
-      // covert lastName and firstName to fullName
+      // convert lastName and firstName to fullName
       fullName: lastName + ' ' + firstName,
       // create credentials object with mail and password
       credentials: {
@@ -34,7 +34,7 @@ export const createUser = async (req, res) => {
         country: country,
       },
     })
-    // return http response 201 with user information
+    // return the created user
     return res.status(201).json({ user })
   } catch (error) {
     // return http error response 400
@@ -43,7 +43,7 @@ export const createUser = async (req, res) => {
 }
 
 export const login = async (req, res) => {
-  // create credentials from request
+  // get credentials from request
   const { mail, password } = req.body
 
   try {
@@ -61,18 +61,20 @@ export const login = async (req, res) => {
       password,
       user.credentials.password
     )
+
     // check if password is correct
     if (!passwordCorrect)
       // return error message with code 400
       return res.status(400).json({ message: 'Mot de passe incorrect' })
     
-    const xsrfToken = uid.sync(18) //generate random xrsf token
+    //generate random xrsf token
+    const xsrfToken = uid.sync(18)
 
     //create JWT token
     const jwtToken = jwt.sign(
       { id: user._id, roles: user.roles, xsrfToken }, //data stored in the token
       process.env.JWTKEY, //jwt's private key
-      { expiresIn: '5m' } //token's validity time
+      { expiresIn: '1m' } //token's validity time
     )
 
     //create refresh token
@@ -81,19 +83,18 @@ export const login = async (req, res) => {
       process.env.REFRESHKEY
     )
 
-    // send access token to the client
+    // store refresh token in the database
+    createRefreshToken(refreshToken, user._id)
+
+    // store access token in the request cookies
     res.cookie('access_token', jwtToken, {
       httpOnly: true,
       sameSite: 'none',
       secure: true,
-      //TODO: passer le site https
       //secure: false, // true to force https
     })
-
-    // store refresh token in the database
-    createRefreshToken(refreshToken, user._id)
     
-    // send refresh token to the client
+    // store refresh token in the request cookies
     res.cookie('refresh_token', refreshToken, {
       httpOnly: true,
       sameSite: 'none',
@@ -104,33 +105,46 @@ export const login = async (req, res) => {
     // send both accessToken and refreshToken with xsrfToken
     res.status(200).json(xsrfToken)
   } catch (error) {
-    console.log(error)
     res.status(400).json({ message: error })
   }
 }
 
 export const refreshUserToken = async (req, res) => {
+  // get the refresh token from cookies
   const refreshToken = req.cookies['refresh_token']
+  console.log(refresh_token)
+
+  // get the xrsf token from request headers
   const xsrfToken = req.headers['x-xsrf-token']
   try {
+    // check if refresh token exist
     if (refreshToken != undefined) {
+      // check if the token is in the database
       if (getToken(refreshToken)) {
+        console.log('hi')
+        // check if refresh token is expired
         jwt.verify(refreshToken, process.env.REFRESHKEY, (error, user) => {
+          // return an error with 403 status
           if (error) return res.status(403).json(error)
-          //create JWT token
+
+          // create access token
           const jwtToken = jwt.sign(
             { id: user.id, roles: user.roles, xsrfToken }, //data stored in the token
             process.env.JWTKEY, //jwt's private key
-            { expiresIn: '10m' } //token's validity time
+            { expiresIn: '1m' } //token's validity time
           )
+            /*
+          // set the token in the response cookies
           res.cookie('access_token', jwtToken, {
             httpOnly: true,
-            //TODO: passer le site https
             //secure: true, // true to force https
-          })
-          res.status(200).json({ message: 'token has been refreshed' })
+          })*/
+
+          // send the response as a success with the cookie
+          res.status(202).json({ message: 'token has been refreshed'+jwtToken })
         })
       } else {
+        // send an error with code 404 
         res.status(404).json({ message: 'refresh token isn\'t available' })
       }
     }
@@ -147,12 +161,17 @@ export const getUsers = async (req, res) => {
   }
 }
 
+// get an user by id
 export const getUserById = async (req, res) => {
+  // get the id of the user from the request params
   const { id } = req.params
   try {
+    // find the user from the id
     const user = await Users.findOne({ _id: id })
+    // send the user
     res.status(200).json(user)
   } catch (error) {
+    // return an error 404
     res.status(404).json({ message: 'cette utilisateur n\'existe pas.' })
   }
 }
@@ -186,15 +205,20 @@ export const addTechnology = async (req, res) => {
 }
 
 export const addRoleToUser = async (req, res) => {
+  // get the role id from the request body
   const { roleId } = req.body
+  // get the user id from the request params
   const { id } = req.params
   try {
+    // find user from the id
     const user = await Users.findById(id)
+    // add a role to the user
     await user.update({
       $addToSet: { roles: roleId },
       new: true,
       upsert: true,
     })
+    // send the updated user
     res.status(201).json(user)
   } catch (error) {
     console.log(error)
@@ -202,13 +226,18 @@ export const addRoleToUser = async (req, res) => {
 }
 
 export const removeRoleToUser = async (req, res) => {
+  // get the role id from the request body
   const { roleId } = req.body
+  // get the user id from the request params
   const { id } = req.params
   try {
+    // find user from the id
     const user = await Users.findById(id)
+    // remove a role to the user
     await user.update({
       $pull: { roles: roleId },
     })
+    // send the updated user
     res.status(201).json(user)
   } catch (error) {
     console.log(error)
