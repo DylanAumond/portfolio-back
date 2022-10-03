@@ -2,8 +2,51 @@ import jwt, { decode } from 'jsonwebtoken'
 import { getToken } from '../controllers/Tokens.js'
 
 export const auth = async (req, res, next) => {
-  // get access token from request
-  const token = req.cookies['access_token']
+  // get accessToken from request
+  const accessToken = req.cookies['access_token']
+
+  // get refresh accessToken from request
+  const refreshToken = req.cookies['refresh_token']
+
+  if(accessToken !== undefined) {
+
+    // get xsrf token from request
+    const xsrfToken = req.headers['x-xsrf-token']
+
+    // verify the accessToken validity
+    jwt.verify(accessToken, process.env.JWTKEY, (err, decoded) => {
+      if (err) {
+        // check if accessToken has expired
+        if (err.name === 'TokenExpiredError') {
+
+          // if refresh token exist
+          if (refreshToken !== undefined) return res.status('401').json({ message: 'we are going to refresh your session' })
+
+          // if no refresh token is available
+          return res.status('403').json({ messsage: 'your session has expired' })
+        }
+
+      } 
+
+      // check if the xrsf token is the in the request and in the accessToken
+      if (decoded.xsrfToken !== xsrfToken) return res.status('403').json({ messsage: 'attack CSRF decteted' })
+      
+      // set the role in the request
+      req.roles = decoded.roles
+
+      // pass to the next step
+      next()
+    })
+  }
+  // if refresh token doesn\'t exist
+  else if(refreshToken !== undefined) return res.status('401').json({message: 'we are refreshing you session'})
+  
+  // send 403 response no accessToken and no refrsh token are available
+  else {return res.status('403').json({ messsage: 'no token available' })}
+}
+
+
+  /*
   // check access token
   if (token != undefined) {
     // get xsrf token from request
@@ -53,7 +96,8 @@ export const auth = async (req, res, next) => {
         next()
       }
     })
-  } else {
+  } 
+  else {
     res.status(403).json({ messsage: 'Invalid JWT Token' })
-  }
-}
+  }*/
+

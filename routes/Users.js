@@ -23,6 +23,8 @@ router.get("/", getUsers);
 
 // get a user by id
 router.get("/:id", getUserById);
+
+// delete a user by id
 router.delete(
   "/:id",
   auth, // need auth
@@ -52,6 +54,6 @@ router.patch(
 router.post("/login", login);
 
 // refreshUserToken
-router.get("/refreshToken", refreshUserToken);
+router.post("/refreshToken", refreshUserToken);
 
 export default router;

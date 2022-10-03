@@ -112,42 +112,41 @@ export const login = async (req, res) => {
 export const refreshUserToken = async (req, res) => {
   // get the refresh token from cookies
   const refreshToken = req.cookies['refresh_token']
-  console.log(refresh_token)
 
   // get the xrsf token from request headers
   const xsrfToken = req.headers['x-xsrf-token']
+
   try {
     // check if refresh token exist
-    if (refreshToken != undefined) {
-      // check if the token is in the database
-      if (getToken(refreshToken)) {
-        console.log('hi')
-        // check if refresh token is expired
-        jwt.verify(refreshToken, process.env.REFRESHKEY, (error, user) => {
-          // return an error with 403 status
-          if (error) return res.status(403).json(error)
+    if (refreshToken === undefined) return res.status(403).json({ message: 'refresh token isn\'t available' }) 
 
-          // create access token
-          const jwtToken = jwt.sign(
-            { id: user.id, roles: user.roles, xsrfToken }, //data stored in the token
-            process.env.JWTKEY, //jwt's private key
-            { expiresIn: '1m' } //token's validity time
-          )
-            /*
-          // set the token in the response cookies
-          res.cookie('access_token', jwtToken, {
-            httpOnly: true,
-            //secure: true, // true to force https
-          })*/
+    // check if the token is in the database
+    if (getToken(refreshToken) === false) return res.status(403).json({ message: 'refresh token isn\'t valid' })
+    
+    // check if refresh token is expired
+    jwt.verify(refreshToken, process.env.REFRESHKEY, (error, user) => {
 
-          // send the response as a success with the cookie
-          res.status(202).json({ message: 'token has been refreshed'+jwtToken })
-        })
-      } else {
-        // send an error with code 404 
-        res.status(404).json({ message: 'refresh token isn\'t available' })
-      }
-    }
+      // return an error with 403 status
+      if (error) return res.status(403).json(error)
+      // create access token
+      const jwtToken = jwt.sign(
+        { id: user.id, roles: user.roles, xsrfToken }, //data stored in the token
+        process.env.JWTKEY, //jwt's private key
+        { expiresIn: '1m' } //token's validity time
+      )
+
+      // set the token in the response cookies
+      res.cookie('access_token', jwtToken, {
+        httpOnly: true,
+        sameSite: 'none',
+        secure: true
+        //secure: true, // true to force https
+      })
+
+      // send the response as a success with the cookie
+      return res.status(202).json({ message: 'token has been refreshed' })
+    })
+
   } catch (error) {}
 }
 
