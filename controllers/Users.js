@@ -1,11 +1,17 @@
-import Users from '../models/Users.js'
-import mongoose from 'mongoose'
-import bcrypt from 'bcryptjs'
-import jwt from 'jsonwebtoken'
-import uid from 'uid-safe'
-import { createRefreshToken, getToken } from './Tokens.js'
+//import Users from '../models/Users.js'
+//import mongoose from 'mongoose'
+const mongoose = require('mongoose');
+const UserModel = require('../models/Users');
+//import bcrypt from 'bcryptjs'
+const bcrypt = require('bcryptjs');
+//import jwt from 'jsonwebtoken'
+const jwt = require('jsonwebtoken');
+//import uid from 'uid-safe'
+const uid = require('uid-safe');
+//import { createRefreshToken, getToken } from './Tokens.js'
+const Token = require('../controllers/Tokens')
 
-export const createUser = async (req, res) => {
+module.exports.createUser = async (req, res) => {
   // get data from request
   const {
     firstName,
@@ -18,7 +24,7 @@ export const createUser = async (req, res) => {
     password,
   } = req.body
   try {
-    const user = await Users.create({
+    const user = await UserModel.create({
       // convert lastName and firstName to fullName
       fullName: lastName + ' ' + firstName,
       // create credentials object with mail and password
@@ -42,13 +48,13 @@ export const createUser = async (req, res) => {
   }
 }
 
-export const login = async (req, res) => {
+module.exports.login = async (req, res) => {
   // get credentials from request
   const { mail, password } = req.body
 
   try {
     // find user by mail
-    const user = await Users.findOne({ 'credentials.mail': mail }).populate('roles')
+    const user = await UserModel.findOne({ 'credentials.mail': mail }).populate('roles')
 
     // check if user exist
     if (!user)
@@ -84,7 +90,7 @@ export const login = async (req, res) => {
     )
 
     // store refresh token in the database
-    createRefreshToken(refreshToken, user._id)
+    Token.createRefreshToken(refreshToken, user._id)
 
     // store access token in the request cookies
     res.cookie('access_token', jwtToken, {
@@ -109,7 +115,7 @@ export const login = async (req, res) => {
   }
 }
 
-export const refreshUserToken = async (req, res) => {
+module.exports.refreshUserToken = async (req, res) => {
   // get the refresh token from cookies
   const refreshToken = req.cookies['refresh_token']
 
@@ -121,7 +127,7 @@ export const refreshUserToken = async (req, res) => {
     if (refreshToken === undefined) return res.status(403).json({ message: 'refresh token isn\'t available' }) 
 
     // check if the token is in the database
-    if (getToken(refreshToken) === false) return res.status(403).json({ message: 'refresh token isn\'t valid' })
+    if (Token.getToken(refreshToken) === false) return res.status(403).json({ message: 'refresh token isn\'t valid' })
     
     // check if refresh token is expired
     jwt.verify(refreshToken, process.env.REFRESHKEY, (error, user) => {
@@ -151,9 +157,9 @@ export const refreshUserToken = async (req, res) => {
 }
 
 // get all users
-export const getUsers = async (req, res) => {
+module.exports.getUsers = async (req, res) => {
   try {
-    const users = await Users.find()
+    const users = await UserModel.find()
     res.status(200).json(users)
   } catch (error) {
     res.status(404).json({ error })
@@ -161,12 +167,12 @@ export const getUsers = async (req, res) => {
 }
 
 // get an user by id
-export const getUserById = async (req, res) => {
+module.exports.getUserById = async (req, res) => {
   // get the id of the user from the request params
   const { id } = req.params
   try {
     // find the user from the id
-    const user = await Users.findOne({ _id: id })
+    const user = await UserModel.findOne({ _id: id })
     // send the user
     res.status(200).json(user)
   } catch (error) {
@@ -175,23 +181,23 @@ export const getUserById = async (req, res) => {
   }
 }
 
-export const deleteUser = async (req, res) => {
+module.exports.deleteUser = async (req, res) => {
   const { id } = req.params
   try {
     if (!mongoose.Types.ObjectId.isValid(id))
       return res.status(404).json({ message: 'this user doens\'t exist' })
-    await Users.findByIdAndRemove(id)
+    await UserModel.findByIdAndRemove(id)
     res.status(200).json({ message: 'User has been deleted' })
   } catch (error) {
     res.status(404).json({ message: 'request want wrong' })
   }
 }
 
-export const addTechnology = async (req, res) => {
+module.exports.addTechnology = async (req, res) => {
   const { technologyId } = req.body
   const { id } = req.params
   try {
-    const user = await Users.findById(id)
+    const user = await UserModel.findById(id)
     await user.update({
       $addToSet: { technologies: technologyId },
       new: true,
@@ -203,14 +209,14 @@ export const addTechnology = async (req, res) => {
   }
 }
 
-export const addRoleToUser = async (req, res) => {
+module.exports.addRoleToUser = async (req, res) => {
   // get the role id from the request body
   const { roleId } = req.body
   // get the user id from the request params
   const { id } = req.params
   try {
     // find user from the id
-    const user = await Users.findById(id)
+    const user = await UserModel.findById(id)
     // add a role to the user
     await user.update({
       $addToSet: { roles: roleId },
@@ -224,14 +230,14 @@ export const addRoleToUser = async (req, res) => {
   }
 }
 
-export const removeRoleToUser = async (req, res) => {
+module.exports.removeRoleToUser = async (req, res) => {
   // get the role id from the request body
   const { roleId } = req.body
   // get the user id from the request params
   const { id } = req.params
   try {
     // find user from the id
-    const user = await Users.findById(id)
+    const user = await UserModel.findById(id)
     // remove a role to the user
     await user.update({
       $pull: { roles: roleId },

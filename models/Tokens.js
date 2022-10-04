@@ -1,6 +1,7 @@
-import mongoose from 'mongoose'
+//import mongoose from 'mongoose'
+const mongoose = require('mongoose')
 
-const tokenSchema = mongoose.Schema({
+const tokenSchema = new mongoose.Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,
@@ -17,4 +18,6 @@ const tokenSchema = mongoose.Schema({
   },
 })
 
-export default mongoose.model('Tokens', tokenSchema)
+//export default mongoose.model('Tokens', tokenSchema)
+const TokenModel = mongoose.model('Tokens', tokenSchema)
+module.exports = TokenModel

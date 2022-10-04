@@ -1,6 +1,7 @@
-import mongoose from 'mongoose'
+//import mongoose from 'mongoose'
+const mongoose = require('mongoose');
 
-const userSchema = mongoose.Schema({
+const userSchema = new mongoose.Schema({
   fullName: { 
     type: String,
     maxLenght: 250,
@@ -48,4 +49,6 @@ const userSchema = mongoose.Schema({
   ],
 })
 
-export default mongoose.model('Users', userSchema)
+//export default mongoose.model('Users', userSchema)
+const UserModel = mongoose.model('Users', userSchema)
+module.exports = UserModel

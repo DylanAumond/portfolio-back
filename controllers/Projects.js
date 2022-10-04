@@ -1,6 +1,10 @@
-import Projects from '../models/Projects.js'
+/*import Projects from '../models/Projects.js'
 import mongoose from 'mongoose'
-import fs from 'fs'
+import fs from 'fs'*/
+
+const mongoose = require('mongoose');
+const ProjectModel = require('../models/Projects');
+const fs = require('fs');
 
 function deleteImage(file) {
   // image's path
@@ -13,14 +17,14 @@ function deleteImage(file) {
   }
 }
 
-export const createProject = async (req, res) => {
+module.exports.createProject = async (req, res) => {
   // get all data from the request
   const { libelle, description, customer, technologies, tasks } = req.body
   // return an array of images' name
   const imgs = req.files !== undefined ? req.files.map((img) => img.filename) : null
   try {
     // create a new project object
-    const project = await Projects.create({
+    const project = await ProjectModel.create({
       libelle,
       description: JSON.parse(description),
       customer: JSON.parse(customer),
@@ -35,7 +39,7 @@ export const createProject = async (req, res) => {
   }
 }
 
-export const updateProject = async (req, res) => {
+module.exports.updateProject = async (req, res) => {
   // get project id from the request params
   const { id } = req.params
 
@@ -58,13 +62,13 @@ export const updateProject = async (req, res) => {
     if (!mongoose.Types.ObjectId.isValid(id))
       return res.status(404).json({ message: 'This Project doesn\'t exist!' })
     if (req.file != null) {
-      let ProjectImg = await Projects.findById(id)
+      let ProjectImg = await ProjectModel.findById(id)
       if (ProjectImg != null) {
         deleteImage(ProjectImg.logo)
       }
       updatedProject.logo = req.file.filename
     }
-    const project = await Projects.findOneAndUpdate(
+    const project = await ProjectModel.findOneAndUpdate(
       { _id: id },
       updatedProject,
       {
@@ -78,7 +82,7 @@ export const updateProject = async (req, res) => {
 }
 
 // delete a project from the database
-export const deleteProject = async (req, res) => {
+module.exports.deleteProject = async (req, res) => {
   // get id from the request's params
   const { id } = req.params
 
@@ -87,7 +91,7 @@ export const deleteProject = async (req, res) => {
     if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).json({ message: 'This Project doesn\'t exist!' })
 
     // select the project
-    const project = await Projects.findOne({ _id: id })
+    const project = await ProjectModel.findOne({ _id: id })
 
     // delete each image associated with the project
     project.imgs.forEach((img) => {
@@ -106,9 +110,9 @@ export const deleteProject = async (req, res) => {
   }
 }
 
-export const getProjects = async (req, res) => {
+module.exports.getProjects = async (req, res) => {
   try {
-    const projects = await Projects.find().populate([
+    const projects = await ProjectModel.find().populate([
       'technologies',
       'customer',
     ])
@@ -118,10 +122,10 @@ export const getProjects = async (req, res) => {
   }
 }
 
-export const getProjectById = async (req, res) => {
+module.exports.getProjectById = async (req, res) => {
   const { id } = req.params
   try {
-    const project = await Projects.findById(id).populate([
+    const project = await ProjectModel.findById(id).populate([
       'technologies',
       'customer',
     ])
@@ -130,10 +134,10 @@ export const getProjectById = async (req, res) => {
   } catch (error) {}
 }
 
-export const addTechnoToProject = async (req, res) => {
+module.exports.addTechnoToProject = async (req, res) => {
   const { projectId, technologyId } = req.body
   try {
-    const project = await Projects.findById(projectId)
+    const project = await ProjectModel.findById(projectId)
     await project.update({
       $addToSet: { technologies: technologyId },
       new: true,
@@ -147,10 +151,10 @@ export const addTechnoToProject = async (req, res) => {
   }
 }
 
-export const removeTechnoFromProject = async (req, res) => {
+module.exports.removeTechnoFromProject = async (req, res) => {
   const { projectId, technologyId } = req.body
   try {
-    const project = await Projects.findById(projectId)
+    const project = await ProjectModel.findById(projectId)
     await project.update({
       $pull: { technologies: technologyId },
     })

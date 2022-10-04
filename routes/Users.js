@@ -1,4 +1,4 @@
-import express from "express";
+/*import express from "express";
 import {
   createUser,
   getUserById,
@@ -13,47 +13,52 @@ import {
 import { auth } from "../middleware/auth.js";
 import { roles } from "../middleware/roles.js";
 
-const router = express.Router();
+const router = express.Router();*/
+const router = require('express').Router();
+const usersController = require('../controllers/Users');
+const AuthMiddleware = require('../middleware/auth');
+const RoleMiddleware = require('../middleware/roles');
 
 // create a user
-router.post("/", createUser);
+router.post("/", usersController.createUser);
 
 // get all users
-router.get("/", getUsers);
+router.get("/", usersController.getUsers);
 
 // get a user by id
-router.get("/:id", getUserById);
+router.get("/:id", usersController.getUserById);
 
 // delete a user by id
 router.delete(
   "/:id",
-  auth, // need auth
-  roles(["ADMIN"]), // autorised roles
-  deleteUser);
+  AuthMiddleware.auth, // need auth
+  RoleMiddleware.roles(["ADMIN"]), // autorised roles
+  usersController.deleteUser);
 
 // add a new technology to a user
-router.patch("/:id/technologies/add", addTechnology);
+router.patch("/:id/technologies/add", usersController.addTechnology);
 
 // add a new role to a user
 router.patch(
   "/:id/roles/add",
-  auth, // need auth
-  roles(["ADMIN"]), // autorised roles
-  addRoleToUser
+  AuthMiddleware.auth, // need auth
+  RoleMiddleware.roles(["ADMIN"]), // autorised roles
+  usersController.addRoleToUser
 );
 
 // remove a role to an user
 router.patch(
   "/:id/roles/remove",
-  auth, // need auth
-  roles(["ADMIN"]), // autorised roles
-  removeRoleToUser
+  AuthMiddleware.auth, // need auth
+  RoleMiddleware.roles(["ADMIN"]), // autorised roles
+  usersController.removeRoleToUser
 );
 
 // login use to set access token
-router.post("/login", login);
+router.post("/login", usersController.login);
 
 // refreshUserToken
-router.post("/refreshToken", refreshUserToken);
+router.post("/refreshToken", usersController.refreshUserToken);
 
-export default router;
+//export default router;
+module.exports = router;

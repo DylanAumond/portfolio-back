@@ -1,6 +1,7 @@
-import mongoose from 'mongoose'
+//import mongoose from 'mongoose'
+const mongoose = require('mongoose');
 
-const projectSchema = mongoose.Schema({
+const projectSchema = new mongoose.Schema({
   libelle: { 
     type: String,
     maxLenght: 1000,
@@ -35,8 +36,11 @@ const projectSchema = mongoose.Schema({
     }
   ],
   customer: {
-    type: mongoose.Schema.Types.ObjectId, ref: 'Customers' 
+      type: mongoose.Schema.Types.ObjectId, ref: 'Customers' 
   },
 })
 
-export default mongoose.model('Projects', projectSchema)
+//export default mongoose.model('Projects', projectSchema)
+const ProjectModel = mongoose.model('Projects', projectSchema)
+
+module.exports = ProjectModel

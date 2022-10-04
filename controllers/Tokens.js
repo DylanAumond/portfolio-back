@@ -1,10 +1,12 @@
-import mongoose from 'mongoose'
-import Tokens from '../models/Tokens.js'
+//import mongoose from 'mongoose'
+//import Tokens from '../models/Tokens.js'
+const mongoose = require('mongoose');
+const TokenModel = require('../models/Tokens');
 
 // create a new token in the database
-export async function createRefreshToken(token, userId) {
+module.exports.createRefreshToken = async (token, userId) => {
   try {
-    const refreshToken = await Tokens.create({
+    const refreshToken = await TokenModel.create({
       userId,
       token,
     })
@@ -13,10 +15,10 @@ export async function createRefreshToken(token, userId) {
   }
 }
 
-export async function getToken(tokenQuerie) {
+module.exports.getToken = async (tokenQuerie) => {
   try {
     // get the token from the database
-    const token = await Tokens.find({ token: tokenQuerie })
+    const token = await TokenModel.find({ token: tokenQuerie })
     return token
   } catch (error) {
     console.log(error)

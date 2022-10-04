@@ -1,6 +1,10 @@
-import Customers from '../models/Customers.js'
+/*import Customers from '../models/Customers.js'
 import mongoose from 'mongoose'
-import fs from 'fs'
+import fs from 'fs'*/
+
+const mongoose = require('mongoose');
+const CustomerModel = require('../models/Customers');
+const fs = require('fs');
 
 
 function deleteImage(file) {
@@ -14,13 +18,13 @@ function deleteImage(file) {
 }
 
 // create a new customer
-export const createCustomer = async (req, res) => {
+module.exports.createCustomer = async (req, res) => {
   // get data from request
   const { libelle, url } = req.body
   // get file from request
   const logo = req.file.filename
   try {
-    const customer = await Customers.create({
+    const customer = await CustomerModel.create({
       libelle,
       url,
       logo,
@@ -34,13 +38,13 @@ export const createCustomer = async (req, res) => {
 }
 
 // delete a customer
-export const deleteCustomer = async (req, res) => {
+module.exports.deleteCustomer = async (req, res) => {
   const { id } = req.params
   try {
     if (!mongoose.Types.ObjectId.isValid(id))
       return res.status(404).json({ message: 'This Customer doesn\'t exist!' })
 
-    const customer = await Customers.findById(id)
+    const customer = await CustomerModel.findById(id)
     deleteImage(customer.logo)
     customer.remove()
     res.json({ message: 'Customer has been deleted' })
@@ -50,10 +54,10 @@ export const deleteCustomer = async (req, res) => {
 }
 
 // get all customers
-export const getCustomers = async (req, res) => {
+module.exports.getCustomers = async (req, res) => {
   try {
     // get all customers in the database
-    const customers = await Customers.find()
+    const customers = await CustomerModel.find()
     // return status code 200 and a list of customers
     res.status(200).json(customers)
   } catch (error) {
@@ -62,12 +66,12 @@ export const getCustomers = async (req, res) => {
 }
 
 // get a customer by id
-export const getCustomer = async (req, res) => {
+module.exports.getCustomer = async (req, res) => {
   const { id } = req.params
   try {
     if (!mongoose.Types.ObjectId.isValid(id))
       return res.status(404).json({ message: 'This Customer doesn\'t exist!' })
-    const customer = await Customers.findById(id)
+    const customer = await CustomerModel.findById(id)
     res.status(200).json(customer)
   } catch (error) {
     res.status(400).json({ message: 'something went wrong', error: error })
@@ -75,7 +79,7 @@ export const getCustomer = async (req, res) => {
 }
 
 // update a customer
-export const updateCustomer = async (req, res) => {
+module.exports.updateCustomer = async (req, res) => {
   const { id } = req.params
   const updatedCustomer = req.body
   try {
@@ -84,7 +88,7 @@ export const updateCustomer = async (req, res) => {
       return res.status(404).json({ message: 'This Customer doesn\'t exist!' })
     if (req.file != null) {
       // find customer by id in db
-      const customerImg = await Customers.findById(id)
+      const customerImg = await CustomerModel.findById(id)
       // if customer has an image
       if (customerImg != null) {
         // delete the customer image
@@ -93,7 +97,7 @@ export const updateCustomer = async (req, res) => {
       // update the customer image src
       updatedCustomer.logo = req.file.filename
     }
-    const customer = await Customers.findOneAndUpdate(
+    const customer = await CustomerModel.findOneAndUpdate(
       { _id: id },
       updatedCustomer,
       {
@@ -105,3 +109,5 @@ export const updateCustomer = async (req, res) => {
     res.status(400).json({ message: 'something went wrong', error: error })
   }
 }
+
+

@@ -1,7 +1,9 @@
-import jwt, { decode } from 'jsonwebtoken'
-import { getToken } from '../controllers/Tokens.js'
+//import jwt, { decode } from 'jsonwebtoken'
+const jwt = require('jsonwebtoken')
+//import { getToken } from '../controllers/Tokens.js'
+const Token = require('../controllers/Tokens')
 
-export const auth = async (req, res, next) => {
+module.exports.auth = async (req, res, next) => {
   // get accessToken from request
   const accessToken = req.cookies['access_token']
 
@@ -61,7 +63,7 @@ export const auth = async (req, res, next) => {
           // if refresh token exist
           if (refreshToken != undefined) {
             // check if refresh token is in database
-            if (getToken(refreshToken)) {
+            if (Token.getToken(refreshToken)) {
               jwt.verify(refreshToken,process.env.REFRESHKEY,
                 (error, user) => {
                   if (error) return res.status(403).json(error)

@@ -1,27 +1,32 @@
-import express from "express";
-import { createRole, deleteRole, getRoles } from "../controllers/Roles.js";
-import { auth } from "../middleware/auth.js";
-import { roles } from "../middleware/roles.js";
+//import express from "express";
+//import { createRole, deleteRole, getRoles } from "../controllers/Roles.js";
+//import { auth } from "../middleware/auth.js";
+//import { roles } from "../middleware/roles.js";
 
-const router = express.Router();
+const router = require('express').Router();
+const RoleController = require("../controllers/Roles")
+const RoleMiddleware = require("../middleware/roles")
+const AuthMiddleware = require("../middleware/auth")
+
 
 // Create a new role
 router.post(
     "/",
-    auth, // need auth
-    roles(["ADMIN"]),
-    createRole);
+    AuthMiddleware.auth, // need auth
+    RoleMiddleware.roles(["ADMIN"]),
+    RoleController.createRole);
 
 router.get(
     "/",
-    auth, // need auth
-    roles(["ADMIN"]),
-    getRoles);
+    AuthMiddleware.auth, // need auth
+    RoleMiddleware.roles(["ADMIN"]),
+    RoleController.getRoles);
 
 router.delete(
     "/:id",
-    auth, // need auth
-    roles(["ADMIN"]),
-    deleteRole);
+    AuthMiddleware.auth, // need auth
+    RoleMiddleware.roles(["ADMIN"]),
+    RoleController.deleteRole);
 
-export default router;
+//export default router;
+module.exports = router;

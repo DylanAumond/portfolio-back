@@ -1,4 +1,4 @@
-export function roles(roles) {
+module.exports.roles = (roles) => {
   return (req, res, next) => {
     // check if user's roles are allowed
     if (req.roles.some((userRole) => roles.indexOf(userRole.libelle) >= 0)) return next()

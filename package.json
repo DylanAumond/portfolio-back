@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "This is the back-end of my portfolio",
   "main": "index.js",
-  "type": "module",
   "scripts": {
     "watch": "supervisor index.js"
   },

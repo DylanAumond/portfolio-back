@@ -1,6 +1,8 @@
-import mongoose from 'mongoose'
+//import mongoose from 'mongoose'
+const mongoose = require('mongoose');
 
-const customerSchema = mongoose.Schema({
+
+const customerSchema = new mongoose.Schema({
   libelle: { 
     type: String,
     minLength: 2,
@@ -19,4 +21,6 @@ const customerSchema = mongoose.Schema({
   },
 })
 
-export default mongoose.model('Customers', customerSchema)
+//export default mongoose.model('Customers', customerSchema)
+const CustomerModel = mongoose.model('Customers', customerSchema)
+module.exports = CustomerModel

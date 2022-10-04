@@ -1,14 +1,24 @@
-import express from "express";
+/*import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import cors from "cors";
-import cookieParser from "cookie-parser";
+import cookieParser from "cookie-parser";*/
+const express = require("express");
+const mongoose = require("mongoose");
+const dotenv = require("dotenv");
+const cors = require("cors");
+const cookieParser = require("cookie-parser");
 
-import userRoutes from "./routes/Users.js";
+const customersRoutes = require('./routes/Customers');
+const technologiesRoutes = require('./routes/Technologies');
+const projectsRoutes = require('./routes/Projects');
+const usersRoutes = require('./routes/Users');
+const rolesRoutes = require('./routes/Roles');
+/*import userRoutes from "./routes/Users.js";
 import technologyRoutes from "./routes/Technologies.js";
 import projectsRoutes from "./routes/Projects.js";
 import customersRoutes from "./routes/Customers.js";
-import rolesRoutes from "./routes/Roles.js";
+import rolesRoutes from "./routes/Roles.js";*/
 
 const app = express();
 dotenv.config();
@@ -28,8 +38,8 @@ app.use(cors(corsOptions));
 //app.use(cors());
 
 // API main routes
-app.use("/users", userRoutes);
-app.use("/technologies", technologyRoutes);
+app.use("/users", usersRoutes);
+app.use("/technologies", technologiesRoutes);
 app.use("/projects", projectsRoutes);
 app.use("/customers", customersRoutes);
 app.use("/roles", rolesRoutes);

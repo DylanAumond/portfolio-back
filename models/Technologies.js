@@ -1,6 +1,7 @@
-import mongoose from 'mongoose'
+//import mongoose from 'mongoose'
+const mongoose = require('mongoose');
 
-const technologySchema = mongoose.Schema({
+const technologySchema = new mongoose.Schema({
   libelle: {
     type: String,
     minLength: 1,
@@ -14,4 +15,7 @@ const technologySchema = mongoose.Schema({
     unique: true 
   },
 })
-export default mongoose.model('Technologies', technologySchema)
+//export default mongoose.model('Technologies', technologySchema)
+const TechnologyModel = mongoose.model("Technologies", technologySchema);
+
+module.exports = TechnologyModel;

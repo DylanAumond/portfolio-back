@@ -1,6 +1,10 @@
-import mongoose from 'mongoose'
+/*import mongoose from 'mongoose'
 import Technologies from '../models/Technologies.js'
-import fs from 'fs'
+import fs from 'fs'*/
+const mongoose = require('mongoose')
+const TechnologyModel = require('../models/Technologies')
+const fs = require('fs')
+
 
 function deleteImage(file) {
   const path = './public/images/' + file
@@ -12,11 +16,11 @@ function deleteImage(file) {
   }
 }
 
-export const createTechnologie = async (req, res) => {
+module.exports.createTechnologie = async (req, res) => {
   const { libelle } = req.body
   const logo = req.file.filename
   try {
-    const technologie = await Technologies.create({
+    const technologie = await TechnologyModel.create({
       libelle,
       logo,
     })
@@ -26,14 +30,14 @@ export const createTechnologie = async (req, res) => {
   }
 }
 
-export const deleteTechnologie = async (req, res) => {
+module.exports.deleteTechnologie = async (req, res) => {
   const { id } = req.params
   try {
     if (!mongoose.Types.ObjectId.isValid(id))
       return res
         .status(404)
         .json({ message: 'This Technologie doesn\'t exist' })
-    const technologie = await Technologies.findById(id)
+    const technologie = await TechnologyModel.findById(id)
     deleteImage(technologie.logo)
     technologie.remove()
     res.status(200).json({ message: 'Technologie has been deleted' })
@@ -43,9 +47,9 @@ export const deleteTechnologie = async (req, res) => {
 }
 
 // get all technologies
-export const getTechnologies = async (req, res) => {
+module.exports.getTechnologies = async (req, res) => {
   try {
-    const technologies = await Technologies.find()
+    const technologies = await TechnologyModel.find()
     res.status(200).json(technologies)
   } catch (error) {
     res.status(404).json({ message: 'request went wrong' })
@@ -53,14 +57,14 @@ export const getTechnologies = async (req, res) => {
 }
 
 // get a technology from id
-export const getTechnologyById = async (req, res) =>{
+module.exports.getTechnologyById = async (req, res) =>{
   const {id} = req.params
   try {
     if (!mongoose.Types.ObjectId.isValid(id))
       return res
       .status(404)
       .json({ message: 'This Technology doesn\'t exist!'})
-    const technologie = await Technologies.findById(id)
+    const technologie = await TechnologyModel.findById(id)
     return res.status(200).json(technologie)
   }
   catch(error){
@@ -68,7 +72,7 @@ export const getTechnologyById = async (req, res) =>{
   }
 }
 
-export const updateTechnology = async (req, res) => {
+module.exports.updateTechnology = async (req, res) => {
   const { id } = req.params
   const updatedTechnology = req.body
   try {
@@ -77,13 +81,13 @@ export const updateTechnology = async (req, res) => {
         .status(404)
         .json({ message: 'This Technology doesn\'t exist!' })
     if (req.file != null) {
-      let technologyImg = await Technologies.findById(id)
+      let technologyImg = await TechnologyModel.findById(id)
       if (technologyImg != null) {
         deleteImage(technologyImg.logo)
       }
       updatedTechnology.logo = req.file.filename
     }
-    const technology = await Technologies.findOneAndUpdate(
+    const technology = await TechnologyModel.findOneAndUpdate(
       { _id: id },
       updatedTechnology,
       {

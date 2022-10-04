@@ -1,4 +1,4 @@
-import express from 'express'
+/*import express from 'express'
 import uploadImage from '../middleware/uploadImage.js'
 import {
   createCustomer,
@@ -10,37 +10,45 @@ import {
 import { auth } from '../middleware/auth.js'
 import { roles } from '../middleware/roles.js'
 
-const router = express.Router()
+const router = express.Router()*/
+
+const router = require('express').Router();
+const customersController = require('../controllers/Customers');
+const RoleMiddleware = require('../middleware/roles');
+const AuthMiddleware = require('../middleware/auth');
+const MulterMiddleware = require('../middleware/uploadImage');
+
 // create a customer
 router.post(
   '/',
-  auth,
-  roles(['ADMIN']), // authorised roles
-  uploadImage.single('logo'), // upload image
-  createCustomer
+  AuthMiddleware.auth,
+  RoleMiddleware.roles(['ADMIN']), // authorised roles
+  MulterMiddleware.single('logo'), // upload image
+  customersController.createCustomer
 )
 
 // get all customers
-router.get('/', getCustomers)
+router.get('/', customersController.getCustomers)
 
 // Delete a customer
 router.delete(
   '/:id',
-  auth,
-  roles(['ADMIN']), // authorised roles
-  deleteCustomer
+  AuthMiddleware.auth,
+  RoleMiddleware.roles(['ADMIN']), // authorised roles
+  customersController.deleteCustomer
 )
 
 // update a customer
 router.patch(
   '/:id',
-  auth, // Need auth
-  roles(['ADMIN']), // authorised roles
-  uploadImage.single('logo'),
-  updateCustomer
+  AuthMiddleware.auth, // Need auth
+  RoleMiddleware.roles(['ADMIN']), // authorised roles
+  MulterMiddleware.single('logo'),
+  customersController.updateCustomer
 )
 
 // get a customer by id
-router.get('/:id', getCustomer)
+router.get('/:id', customersController.getCustomer)
 
-export default router
+//export default router
+module.exports = router;
