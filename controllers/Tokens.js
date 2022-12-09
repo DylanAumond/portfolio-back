@@ -1,5 +1,3 @@
-//import mongoose from 'mongoose'
-//import Tokens from '../models/Tokens.js'
 const mongoose = require('mongoose');
 const TokenModel = require('../models/Tokens');
 
