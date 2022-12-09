@@ -1,6 +1,3 @@
-/*import Projects from '../models/Projects.js'
-import mongoose from 'mongoose'
-import fs from 'fs'*/
 
 const mongoose = require('mongoose');
 const ProjectModel = require('../models/Projects');

@@ -1,5 +1,3 @@
-//import Roles from '../models/Roles.js'
-//import mongoose from 'mongoose'
 const mongoose = require('mongoose');
 const RoleModel = require('../models/Roles');
 

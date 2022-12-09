@@ -1,14 +1,8 @@
-//import Users from '../models/Users.js'
-//import mongoose from 'mongoose'
 const mongoose = require('mongoose');
 const UserModel = require('../models/Users');
-//import bcrypt from 'bcryptjs'
 const bcrypt = require('bcryptjs');
-//import jwt from 'jsonwebtoken'
 const jwt = require('jsonwebtoken');
-//import uid from 'uid-safe'
 const uid = require('uid-safe');
-//import { createRefreshToken, getToken } from './Tokens.js'
 const Token = require('../controllers/Tokens')
 
 module.exports.createUser = async (req, res) => {

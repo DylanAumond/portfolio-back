@@ -1,6 +1,3 @@
-/*import mongoose from 'mongoose'
-import Technologies from '../models/Technologies.js'
-import fs from 'fs'*/
 const mongoose = require('mongoose')
 const TechnologyModel = require('../models/Technologies')
 const fs = require('fs')

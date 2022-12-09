@@ -1,7 +1,3 @@
-/*import Customers from '../models/Customers.js'
-import mongoose from 'mongoose'
-import fs from 'fs'*/
-
 const mongoose = require('mongoose');
 const CustomerModel = require('../models/Customers');
 const fs = require('fs');
