@@ -1,19 +1,3 @@
-/*import express from "express";
-import {
-  createUser,
-  getUserById,
-  getUsers,
-  addTechnology,
-  deleteUser,
-  login,
-  refreshUserToken,
-  addRoleToUser,
-  removeRoleToUser,
-} from "../controllers/Users.js";
-import { auth } from "../middleware/auth.js";
-import { roles } from "../middleware/roles.js";
-
-const router = express.Router();*/
 const router = require('express').Router();
 const usersController = require('../controllers/Users');
 const AuthMiddleware = require('../middleware/auth');
@@ -60,5 +44,4 @@ router.post("/login", usersController.login);
 // refreshUserToken
 router.post("/refreshToken", usersController.refreshUserToken);
 
-//export default router;
 module.exports = router;

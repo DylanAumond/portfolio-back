@@ -1,8 +1,3 @@
-//import express from "express";
-//import { createRole, deleteRole, getRoles } from "../controllers/Roles.js";
-//import { auth } from "../middleware/auth.js";
-//import { roles } from "../middleware/roles.js";
-
 const router = require('express').Router();
 const RoleController = require("../controllers/Roles")
 const RoleMiddleware = require("../middleware/roles")
@@ -28,5 +23,4 @@ router.delete(
     RoleMiddleware.roles(["ADMIN"]),
     RoleController.deleteRole);
 
-//export default router;
 module.exports = router;

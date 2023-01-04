@@ -1,24 +1,9 @@
-/*import express from "express";
-import {
-  addTechnoToProject,
-  createProject,
-  deleteProject,
-  getProjectById,
-  getProjects,
-  removeTechnoFromProject,
-  updateProject,
-} from "../controllers/Projects.js";
-import { auth } from "../middleware/auth.js";
-import { roles } from "../middleware/roles.js";
-import uploadImage from "../middleware/uploadImage.js";
-
-const router = express.Router();*/
-
 const router = require('express').Router();
 const projectsController = require('../controllers/Projects');
 const AuthMiddleware = require('../middleware/auth');
 const RoleMiddleware = require('../middleware/roles');
 const MulterMiddleware = require('../middleware/uploadImage');
+const SharpMiddleware = require('../middleware/sharp');
 
 
 // create a new project
@@ -27,6 +12,7 @@ router.post(
   AuthMiddleware.auth, // need auth
   RoleMiddleware.roles(["ADMIN"]), // authorised roles
   MulterMiddleware.array("imgs"),
+  SharpMiddleware.compressImage(1280,720),
   projectsController.createProject
 );
 
@@ -41,6 +27,7 @@ router.patch("/:id",
 AuthMiddleware.auth, // need auth
 RoleMiddleware.roles(["ADMIN"]), // authorised roles
 MulterMiddleware.array("imgs"),
+SharpMiddleware.compressImage(1280,720),
 projectsController.updateProject
 );
 
